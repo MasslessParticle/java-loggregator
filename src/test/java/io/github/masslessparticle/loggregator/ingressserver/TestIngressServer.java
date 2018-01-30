@@ -25,24 +25,26 @@ public class TestIngressServer extends IngressImplBase {
 
     private Server server;
 
-    public TestIngressServer(String serverCert, String serverKey, String caCert) throws SSLException {
+    public TestIngressServer(String serverCert, String serverKey, String caCert) {
         server = NettyServerBuilder
                 .forAddress(new InetSocketAddress("localhost", 0))
                 .sslContext(getSslContext(serverCert, serverKey, caCert))
                 .addService(this)
                 .build();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(TestIngressServer.this::stop));
     }
 
-    private SslContext getSslContext(String serverCert, String serverKey, String caCert) throws SSLException {
+    private SslContext getSslContext(String serverCert, String serverKey, String caCert) {
         SslContextBuilder sslClientContextBuilder = SslContextBuilder
                 .forServer(new File(serverCert), new File(serverKey))
                 .trustManager(new File(caCert))
                 .clientAuth(ClientAuth.OPTIONAL);
 
-        return GrpcSslContexts.configure(sslClientContextBuilder,
-                SslProvider.OPENSSL).build();
+        try {
+            return GrpcSslContexts.configure(sslClientContextBuilder,
+                    SslProvider.OPENSSL).build();
+        } catch (SSLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String address() {
@@ -55,8 +57,14 @@ public class TestIngressServer extends IngressImplBase {
         }
     }
 
-    public void start() throws IOException {
-        server.start();
+    public void start() throws RuntimeException {
+        if (server != null) {
+            try {
+                server.start();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public StreamObserver<Envelope> sender(StreamObserver<IngressResponse> responseObserver) {

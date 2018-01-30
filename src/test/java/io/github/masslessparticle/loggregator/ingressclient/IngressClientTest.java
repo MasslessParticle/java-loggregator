@@ -3,34 +3,39 @@ package io.github.masslessparticle.loggregator.ingressclient;
 import io.github.masslessparticle.loggregator.ingressserver.TestIngressServer;
 import org.junit.jupiter.api.Test;
 
-import javax.net.ssl.SSLException;
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class IngressClientTest {
 
     @Test
-    void canBuildAnIngressClientWithMutualTLSEnabled() {
+    void clientCanConnectToAServer() {
         TestIngressServer server = buildIngressServer();
+        server.start();
 
+        IngressClient client = buildIngressClient(server.address());
 
-        assertTrue(true);
+        assertTrue(client.connected());
+        server.stop();
     }
 
     private TestIngressServer buildIngressServer() {
-        try {
-            return new TestIngressServer(
-                    fixturePath("server.crt"),
-                    fixturePath("server.key"),
-                    fixturePath("CA.crt")
-            );
-        } catch (SSLException e) {
-            e.printStackTrace();
-            fail("Unable to build test ingress server");
-        }
+        return new TestIngressServer(
+                fixturePath("server.crt"),
+                fixturePath("server.key"),
+                fixturePath("CA.crt")
+        );
+    }
 
-        return null;
+    private IngressClient buildIngressClient(String address) {
+        return new IngressClient(
+                address,
+                fixturePath("CA.crt"),
+                fixturePath("client.crt"),
+                fixturePath("client.key")
+        );
     }
 
     private String fixturePath(String name) {
