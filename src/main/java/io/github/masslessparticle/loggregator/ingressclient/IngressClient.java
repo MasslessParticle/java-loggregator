@@ -9,7 +9,13 @@ import io.netty.handler.ssl.SslContextBuilder;
 
 import javax.net.ssl.SSLException;
 import java.io.File;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.HashMap;
+import java.util.Map;
 
+import static java.time.temporal.ChronoUnit.*;
 import static org.cloudfoundry.loggregator.v2.IngressGrpc.IngressStub;
 import static org.cloudfoundry.loggregator.v2.IngressGrpc.newStub;
 
@@ -17,33 +23,24 @@ import static org.cloudfoundry.loggregator.v2.IngressGrpc.newStub;
 public class IngressClient {
 
     private String address;
-    private IngressStub asyncStub;
+    private IngressStub client;
 
+    private Map<String, String> tags;
+    private int maxBatchSize;
+    private Duration batchFlushInterval;
 
-    public IngressClient(String address, String caCert, String clientCert, String clientKey) {
+    public IngressClient(String address, TlsConfig tlsConfig) {
         this.address = address;
-
-        SslContext sslContext = createSSLContext(caCert, clientCert, clientKey);
+        this.tags = new HashMap<>();
+        this.maxBatchSize = 100;
+        this.batchFlushInterval = Duration.of(100, MILLIS);
 
         ManagedChannel channel = NettyChannelBuilder.forAddress(host(), port())
                 .negotiationType(NegotiationType.TLS)
-                .sslContext(sslContext)
+                .sslContext(tlsConfig.sslContext())
                 .build();
 
-        asyncStub = newStub(channel);
-    }
-
-    private SslContext createSSLContext(String caCert, String clientCert, String clientKey) {
-        SslContextBuilder builder = GrpcSslContexts.forClient();
-
-        builder.trustManager(new File(caCert));
-        builder.keyManager(new File(clientCert), new File(clientKey));
-
-        try {
-            return builder.build();
-        } catch (SSLException e) {
-            throw new RuntimeException(e);
-        }
+        client = newStub(channel);
     }
 
     public String host() {
@@ -55,6 +52,26 @@ public class IngressClient {
     }
 
     public Boolean connected() {
-        return asyncStub != null;
+        return client != null;
+    }
+
+    public void setTag(String name, String value) {
+        tags.put("name", value);
+    }
+
+    public void setBatchMaxSize(int maxSize) {
+        if (maxSize < 0) {
+            throw new IllegalArgumentException("Batch size must be >= 0");
+        }
+
+        maxBatchSize = maxSize;
+    }
+
+    public void setBatchFlushInterval(Duration interval) {
+        batchFlushInterval = interval;
+    }
+
+    public void emit(Emittable e) {
+
     }
 }

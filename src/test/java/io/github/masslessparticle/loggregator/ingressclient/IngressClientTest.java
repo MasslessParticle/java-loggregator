@@ -1,24 +1,39 @@
 package io.github.masslessparticle.loggregator.ingressclient;
 
 import io.github.masslessparticle.loggregator.ingressserver.TestIngressServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class IngressClientTest {
+    TestIngressServer server;
+
+    @BeforeEach
+    void setup() {
+         server  = buildIngressServer();
+         server.start();
+    }
+
+    @AfterEach
+    void cleanup() {
+        server.stop();
+    }
+
+    @Test
+    void clientDoesNotAcceptLessThan0ForMaxBatchSize() {
+        IngressClient client = buildIngressClient(server.address());
+        assertThrows(IllegalArgumentException.class, () -> client.setBatchMaxSize(-1));
+    }
 
     @Test
     void clientCanConnectToAServer() {
-        TestIngressServer server = buildIngressServer();
-        server.start();
-
         IngressClient client = buildIngressClient(server.address());
-
         assertTrue(client.connected());
-        server.stop();
     }
 
     private TestIngressServer buildIngressServer() {
@@ -32,10 +47,15 @@ class IngressClientTest {
     private IngressClient buildIngressClient(String address) {
         return new IngressClient(
                 address,
+                tlsConfig()
+        );
+    }
+
+    private TlsConfig tlsConfig() {
+        return new TlsConfig(
                 fixturePath("CA.crt"),
                 fixturePath("client.crt"),
-                fixturePath("client.key")
-        );
+                fixturePath("client.key"));
     }
 
     private String fixturePath(String name) {
