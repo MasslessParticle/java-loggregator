@@ -20,6 +20,12 @@ class CounterTest {
     }
 
     @Test
+    void deltaMustBeGreaterThanOrEqualTo0() {
+        Counter counter = new Counter("counter-1");
+        assertThrows(IllegalArgumentException.class, () -> counter.setDelta(-1));
+    }
+
+    @Test
     void setsAdditionalInformation() {
         Counter counter = new Counter("counter-1");
         counter.setAppInfo("app-1", 3);

@@ -49,6 +49,10 @@ public class Counter implements Emittable {
     }
 
     public void setDelta(long delta) {
+        if (delta < 0) {
+            throw new IllegalArgumentException("delta must be >= 0");
+        }
+
         this.delta = delta;
     }
 }
