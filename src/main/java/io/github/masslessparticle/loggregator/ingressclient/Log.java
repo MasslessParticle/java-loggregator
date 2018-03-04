@@ -7,19 +7,16 @@ import static com.google.protobuf.ByteString.copyFromUtf8;
 class Log implements Emittable {
     private String message;
 
-    private String appId = "";
-    private String sourceType = "";
-    private String sourceInstance = "";
+    private String appId;
+    private String sourceType;
+    private String sourceInstance;
     private boolean isStdOut = false;
-
-    private boolean hasAppInfo = false;
 
     public Log(String message) {
         this.message = message;
     }
 
     public void setAppInfo(String appId, String sourceType, String sourceInstance) {
-        this.hasAppInfo = true;
         this.appId = appId;
         this.sourceType = sourceType;
         this.sourceInstance = sourceInstance;
@@ -29,7 +26,7 @@ class Log implements Emittable {
         this.isStdOut = true;
     }
 
-    LoggregatorEnvelope.Envelope envelopeWithMessage(LoggregatorEnvelope.Envelope e) {
+    public LoggregatorEnvelope.Envelope envelopeWithMessage(LoggregatorEnvelope.Envelope e) {
         LoggregatorEnvelope.Envelope.Builder envelopeBuilder = e.toBuilder();
         envelopeBuilder = addAppInfo(envelopeBuilder);
         envelopeBuilder = addLog(envelopeBuilder);
@@ -37,7 +34,7 @@ class Log implements Emittable {
     }
 
     private LoggregatorEnvelope.Envelope.Builder addAppInfo(LoggregatorEnvelope.Envelope.Builder envelopeBuilder) {
-        if (!hasAppInfo) {
+        if (appId == null) {
             return envelopeBuilder;
         }
 
