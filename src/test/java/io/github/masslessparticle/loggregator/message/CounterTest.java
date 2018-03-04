@@ -1,10 +1,10 @@
-package io.github.masslessparticle.loggregator.ingressclient;
+package io.github.masslessparticle.loggregator.message;
 
-import com.google.protobuf.ByteString;
 import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CounterTest {
 

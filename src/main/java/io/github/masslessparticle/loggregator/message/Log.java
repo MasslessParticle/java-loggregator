@@ -1,5 +1,6 @@
-package io.github.masslessparticle.loggregator.ingressclient;
+package io.github.masslessparticle.loggregator.message;
 
+import io.github.masslessparticle.loggregator.ingressclient.Emittable;
 import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 
 import static com.google.protobuf.ByteString.copyFromUtf8;
