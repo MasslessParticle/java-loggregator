@@ -1,21 +1,14 @@
 package io.github.masslessparticle.loggregator.ingressclient;
 
 import io.grpc.ManagedChannel;
-import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
 
-import javax.net.ssl.SSLException;
-import java.io.File;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.time.temporal.ChronoUnit.*;
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.cloudfoundry.loggregator.v2.IngressGrpc.IngressStub;
 import static org.cloudfoundry.loggregator.v2.IngressGrpc.newStub;
 

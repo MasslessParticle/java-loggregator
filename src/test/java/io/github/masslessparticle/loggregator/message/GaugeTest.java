@@ -1,18 +1,20 @@
 package io.github.masslessparticle.loggregator.message;
 
-import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.GaugeValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GaugeTest {
     @Test
     void addsAGaugeToAnEnvelope() {
         Gauge gauge = new Gauge();
 
-        LoggregatorEnvelope.Envelope e = envelope();
+        Envelope e = envelope();
         e = gauge.envelopeWithMessage(e);
 
         assertTrue(e.hasGauge());
@@ -23,7 +25,7 @@ class GaugeTest {
         Gauge gauge = new Gauge();
         gauge.setAppInfo("app-1", 3);
 
-        LoggregatorEnvelope.Envelope e = envelope();
+        Envelope e = envelope();
         e = gauge.envelopeWithMessage(e);
 
         assertEquals(e.getSourceId(), "app-1");
@@ -37,9 +39,9 @@ class GaugeTest {
         gauge.setValue("metric-2", 7.85, "b");
         gauge.setValue("metric-3", 8.85, "c");
 
-        LoggregatorEnvelope.Envelope e = envelope();
+        Envelope e = envelope();
         e = gauge.envelopeWithMessage(e);
-        Map<String, LoggregatorEnvelope.GaugeValue> metrics = e.getGauge().getMetricsMap();
+        Map<String, GaugeValue> metrics = e.getGauge().getMetricsMap();
 
         assertEquals(metrics.get("metric-1").getValue(), 6.85);
         assertEquals(metrics.get("metric-1").getUnit(), "a");
@@ -51,8 +53,8 @@ class GaugeTest {
         assertEquals(metrics.get("metric-3").getUnit(), "c");
     }
 
-    private LoggregatorEnvelope.Envelope envelope() {
-        LoggregatorEnvelope.Envelope.Builder envelopeBuilder = LoggregatorEnvelope.Envelope.newBuilder();
+    private Envelope envelope() {
+        Envelope.Builder envelopeBuilder = Envelope.newBuilder();
         return envelopeBuilder.setTimestamp(12345).build();
     }
 }

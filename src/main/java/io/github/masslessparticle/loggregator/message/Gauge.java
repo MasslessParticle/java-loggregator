@@ -6,7 +6,8 @@ import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.*;
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.GaugeValue;
 
 public class Gauge implements Emittable {
 

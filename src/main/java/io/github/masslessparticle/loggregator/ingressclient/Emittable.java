@@ -1,7 +1,7 @@
 package io.github.masslessparticle.loggregator.ingressclient;
 
-import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
 
 public interface Emittable {
-    LoggregatorEnvelope.Envelope envelopeWithMessage(LoggregatorEnvelope.Envelope e);
+    Envelope envelopeWithMessage(Envelope e);
 }

@@ -3,6 +3,8 @@ package io.github.masslessparticle.loggregator.message;
 import io.github.masslessparticle.loggregator.ingressclient.Emittable;
 import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
+
 public class Counter implements Emittable {
 
     private String name;
@@ -15,14 +17,14 @@ public class Counter implements Emittable {
     }
 
     @Override
-    public LoggregatorEnvelope.Envelope envelopeWithMessage(LoggregatorEnvelope.Envelope e) {
-        LoggregatorEnvelope.Envelope.Builder envelopeBuilder = e.toBuilder();
+    public Envelope envelopeWithMessage(Envelope e) {
+        Envelope.Builder envelopeBuilder = e.toBuilder();
         envelopeBuilder = addAppInfo(envelopeBuilder);
         envelopeBuilder = addCounter(envelopeBuilder);
         return envelopeBuilder.build();
     }
 
-    private LoggregatorEnvelope.Envelope.Builder addAppInfo(LoggregatorEnvelope.Envelope.Builder envelopeBuilder) {
+    private Envelope.Builder addAppInfo(Envelope.Builder envelopeBuilder) {
         if (appId == null) {
             return envelopeBuilder;
         }
@@ -32,7 +34,7 @@ public class Counter implements Emittable {
                 .setInstanceId(Integer.toString(index));
     }
 
-    private LoggregatorEnvelope.Envelope.Builder addCounter(LoggregatorEnvelope.Envelope.Builder envelopeBuilder) {
+    private Envelope.Builder addCounter(Envelope.Builder envelopeBuilder) {
         LoggregatorEnvelope.Counter counter = envelopeBuilder.getCounterBuilder()
                 .setName(name)
                 .setDelta(getDelta())

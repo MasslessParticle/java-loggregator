@@ -4,6 +4,7 @@ import com.google.protobuf.ByteString;
 import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 import org.junit.jupiter.api.Test;
 
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LogTest {
@@ -12,7 +13,7 @@ class LogTest {
     void addsALogToAnEnvelope() {
         Log log = new Log("Log Message");
 
-        LoggregatorEnvelope.Envelope e = envelope();
+        Envelope e = envelope();
         e = log.envelopeWithMessage(e);
 
         ByteString logLessage = e.getLog().getPayload();
@@ -26,7 +27,7 @@ class LogTest {
         log.setAppInfo("app-1", "app", "3");
         log.setStdOut();
 
-        LoggregatorEnvelope.Envelope e = envelope();
+        Envelope e = envelope();
         e = log.envelopeWithMessage(e);
 
         assertEquals(e.getSourceId(), "app-1");
@@ -35,8 +36,8 @@ class LogTest {
         assertEquals(e.getLog().getType(), LoggregatorEnvelope.Log.Type.OUT);
     }
 
-    private LoggregatorEnvelope.Envelope envelope() {
-        LoggregatorEnvelope.Envelope.Builder envelopeBuilder = LoggregatorEnvelope.Envelope.newBuilder();
+    private Envelope envelope() {
+        Envelope.Builder envelopeBuilder = Envelope.newBuilder();
         return envelopeBuilder.setTimestamp(12345).build();
     }
 }

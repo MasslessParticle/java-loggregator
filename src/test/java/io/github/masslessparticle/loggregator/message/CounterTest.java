@@ -1,8 +1,8 @@
 package io.github.masslessparticle.loggregator.message;
 
-import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 import org.junit.jupiter.api.Test;
 
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -12,7 +12,7 @@ class CounterTest {
     void addsACounterToAnEnvelope() {
         Counter counter = new Counter("counter-1");
 
-        LoggregatorEnvelope.Envelope e = envelope();
+        Envelope e = envelope();
         e = counter.envelopeWithMessage(e);
 
         assertEquals(e.getCounter().getName(), "counter-1");
@@ -31,7 +31,7 @@ class CounterTest {
         counter.setAppInfo("app-1", 3);
         counter.setDelta(6);
 
-        LoggregatorEnvelope.Envelope e = envelope();
+        Envelope e = envelope();
         e = counter.envelopeWithMessage(e);
 
         assertEquals(e.getSourceId(), "app-1");
@@ -40,8 +40,8 @@ class CounterTest {
         assertEquals(e.getCounter().getDelta(), 6);
     }
 
-    private LoggregatorEnvelope.Envelope envelope() {
-        LoggregatorEnvelope.Envelope.Builder envelopeBuilder = LoggregatorEnvelope.Envelope.newBuilder();
+    private Envelope envelope() {
+        Envelope.Builder envelopeBuilder = Envelope.newBuilder();
         return envelopeBuilder.setTimestamp(12345).build();
     }
 }

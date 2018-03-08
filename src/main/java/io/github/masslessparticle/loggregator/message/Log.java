@@ -4,6 +4,7 @@ import io.github.masslessparticle.loggregator.ingressclient.Emittable;
 import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 
 import static com.google.protobuf.ByteString.copyFromUtf8;
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
 
 class Log implements Emittable {
     private String message;
@@ -27,14 +28,14 @@ class Log implements Emittable {
         this.isStdOut = true;
     }
 
-    public LoggregatorEnvelope.Envelope envelopeWithMessage(LoggregatorEnvelope.Envelope e) {
-        LoggregatorEnvelope.Envelope.Builder envelopeBuilder = e.toBuilder();
+    public Envelope envelopeWithMessage(Envelope e) {
+        Envelope.Builder envelopeBuilder = e.toBuilder();
         envelopeBuilder = addAppInfo(envelopeBuilder);
         envelopeBuilder = addLog(envelopeBuilder);
         return envelopeBuilder.build();
     }
 
-    private LoggregatorEnvelope.Envelope.Builder addAppInfo(LoggregatorEnvelope.Envelope.Builder envelopeBuilder) {
+    private Envelope.Builder addAppInfo(Envelope.Builder envelopeBuilder) {
         if (appId == null) {
             return envelopeBuilder;
         }
@@ -45,7 +46,7 @@ class Log implements Emittable {
                 .putTags("source_type", sourceType);
     }
 
-    private LoggregatorEnvelope.Envelope.Builder addLog(LoggregatorEnvelope.Envelope.Builder envelopeBuilder) {
+    private Envelope.Builder addLog(Envelope.Builder envelopeBuilder) {
         LoggregatorEnvelope.Log log = envelopeBuilder.getLogBuilder()
                 .setType(getLogType())
                 .setPayload(copyFromUtf8(message)).build();
