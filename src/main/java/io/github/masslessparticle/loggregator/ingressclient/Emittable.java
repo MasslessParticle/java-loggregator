@@ -4,4 +4,8 @@ import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
 
 public interface Emittable {
     Envelope envelopeWithMessage(Envelope e);
+
+    default boolean shouldBatch() {
+        return true;
+    }
 }

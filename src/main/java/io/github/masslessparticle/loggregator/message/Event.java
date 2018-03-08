@@ -23,5 +23,10 @@ public class Event implements Emittable {
                 .setBody(body).build();
         return envelopeBuilder.setEvent(event).build();
     }
+
+    @Override
+    public boolean shouldBatch() {
+        return false;
+    }
 }
 
