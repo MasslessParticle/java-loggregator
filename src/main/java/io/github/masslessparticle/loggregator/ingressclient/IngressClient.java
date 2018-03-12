@@ -11,6 +11,8 @@ import java.util.Map;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.cloudfoundry.loggregator.v2.IngressGrpc.IngressStub;
 import static org.cloudfoundry.loggregator.v2.IngressGrpc.newStub;
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
+import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.EnvelopeBatch;
 
 
 public class IngressClient {
@@ -44,12 +46,8 @@ public class IngressClient {
         return Integer.valueOf(address.split(":")[1]);
     }
 
-    public Boolean connected() {
-        return client != null;
-    }
-
     public void setTag(String name, String value) {
-        tags.put("name", value);
+        tags.put(name, value);
     }
 
     public void setBatchMaxSize(int maxSize) {
@@ -65,6 +63,11 @@ public class IngressClient {
     }
 
     public void emit(Emittable e) {
+        Envelope envelope = Envelope.newBuilder().build();
+        EnvelopeBatch request = EnvelopeBatch.newBuilder()
+                .addBatch(e.envelopeWithMessage(envelope))
+                .build();
 
+        client.send(request, new SendObserver());
     }
 }

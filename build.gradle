@@ -22,21 +22,21 @@ repositories {
     mavenCentral()
 }
 
-def tcnative_classifier = osdetector.classifier;
-// Fedora variants use a different soname for OpenSSL than other linux distributions
-// (see http://netty.io/wiki/forked-tomcat-native.html).
-if (osdetector.os == "linux" && osdetector.release.isLike("fedora")) {
-    tcnative_classifier += "-fedora";
-}
+def grpcVersion = '1.10.0'
+def nettyTcNativeVersion = '2.0.7.Final'
 
 dependencies {
-    compile ('io.grpc:grpc-netty:1.9.0')
-    compile ('io.grpc:grpc-protobuf:1.9.0')
-    compile ('io.grpc:grpc-stub:1.9.0')
-    compile 'io.netty:netty-tcnative-boringssl-static:2.0.6.Final'
+    compile "com.google.api.grpc:proto-google-common-protos:1.0.0"
+    compile "io.grpc:grpc-alts:${grpcVersion}"
+    compile "io.grpc:grpc-netty:${grpcVersion}"
+    compile "io.grpc:grpc-protobuf:${grpcVersion}"
+    compile "io.grpc:grpc-stub:${grpcVersion}"
 
+    // Used for TLS
+    compile "io.netty:netty-tcnative-boringssl-static:${nettyTcNativeVersion}"
 
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
+    testCompile "org.junit.jupiter:junit-jupiter-api:5.0.3"
+    testCompile 'org.awaitility:awaitility:3.1.0'
 
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.3")
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.0.3"
 }

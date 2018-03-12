@@ -1,14 +1,18 @@
 package io.github.masslessparticle.loggregator.ingressclient;
 
 import io.github.masslessparticle.loggregator.ingressserver.TestIngressServer;
+import io.github.masslessparticle.loggregator.message.Event;
+import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 class IngressClientTest {
     TestIngressServer server;
@@ -16,7 +20,7 @@ class IngressClientTest {
     @BeforeEach
     void setup() {
          server  = buildIngressServer();
-         server.start();
+         new Thread(() -> server.start()).start();
     }
 
     @AfterEach
@@ -31,17 +35,29 @@ class IngressClientTest {
     }
 
     @Test
-    void clientCanConnectToAServer() {
+    void receivesAnEmittedEvent() {
         IngressClient client = buildIngressClient(server.address());
-        assertTrue(client.connected());
+        Event event = new Event("event-1", "event occurred");
+
+        client.emit(event);
+
+        await().atMost(10, SECONDS).until(() -> server.received().size() == 1);
+
+        LoggregatorEnvelope.Event received = server.received().get(0).getEvent();
+        assertEquals(received.getTitle(), "event-1");
+        assertEquals(received.getBody(), "event occurred");
     }
 
     private TestIngressServer buildIngressServer() {
-        return new TestIngressServer(
-                fixturePath("server.crt"),
-                fixturePath("server.key"),
-                fixturePath("CA.crt")
-        );
+        try {
+            return new TestIngressServer(
+                    fixturePath("server.crt"),
+                    fixturePath("server.pem"),
+                    fixturePath("ca.crt")
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private IngressClient buildIngressClient(String address) {
@@ -53,9 +69,9 @@ class IngressClientTest {
 
     private TlsConfig tlsConfig() {
         return new TlsConfig(
-                fixturePath("CA.crt"),
+                fixturePath("ca.crt"),
                 fixturePath("client.crt"),
-                fixturePath("client.key"));
+                fixturePath("client.pem"));
     }
 
     private String fixturePath(String name) {

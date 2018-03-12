@@ -5,46 +5,43 @@ import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
 import io.netty.handler.ssl.ClientAuth;
-import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
+import org.cloudfoundry.loggregator.v2.IngressGrpc;
+import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 
-import javax.net.ssl.SSLException;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
-import static org.cloudfoundry.loggregator.v2.IngressGrpc.*;
-import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
-import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.EnvelopeBatch;
+import static org.cloudfoundry.loggregator.v2.IngressGrpc.getBatchSenderMethod;
+import static org.cloudfoundry.loggregator.v2.IngressGrpc.getSenderMethod;
 import static org.cloudfoundry.loggregator.v2.LoggregatorIngress.*;
 
-public class TestIngressServer extends IngressImplBase {
+public class TestIngressServer extends IngressGrpc.IngressImplBase {
 
     private Server server;
+    private List<LoggregatorEnvelope.Envelope> envelopes = new CopyOnWriteArrayList<>();
 
-    public TestIngressServer(String serverCert, String serverKey, String caCert) {
+    public TestIngressServer(String serverCert, String serverKey, String caCert) throws IOException {
         server = NettyServerBuilder
-                .forAddress(new InetSocketAddress("localhost", 0))
-                .sslContext(getSslContext(serverCert, serverKey, caCert))
+                .forAddress(new InetSocketAddress("localhost", 8080))
+                .sslContext(getSslContextBuilder(serverCert, serverKey, caCert).build())
                 .addService(this)
                 .build();
     }
 
-    private SslContext getSslContext(String serverCert, String serverKey, String caCert) {
-        SslContextBuilder sslClientContextBuilder = SslContextBuilder
-                .forServer(new File(serverCert), new File(serverKey))
-                .trustManager(new File(caCert))
-                .clientAuth(ClientAuth.OPTIONAL);
+    private SslContextBuilder getSslContextBuilder(String serverCert, String serverKey, String caCert) {
+        SslContextBuilder sslClientContextBuilder = SslContextBuilder.forServer(new File(serverCert),
+                new File(serverKey));
+            sslClientContextBuilder.trustManager(new File(caCert));
+            sslClientContextBuilder.clientAuth(ClientAuth.OPTIONAL);
 
-        try {
             return GrpcSslContexts.configure(sslClientContextBuilder,
-                    SslProvider.OPENSSL).build();
-        } catch (SSLException e) {
-            throw new RuntimeException(e);
-        }
+                SslProvider.OPENSSL);
     }
 
     public String address() {
@@ -53,7 +50,7 @@ public class TestIngressServer extends IngressImplBase {
 
     public void stop() {
         if (server != null) {
-            server.shutdown();
+            server.shutdownNow();
         }
     }
 
@@ -61,25 +58,30 @@ public class TestIngressServer extends IngressImplBase {
         if (server != null) {
             try {
                 server.start();
-            } catch (IOException e) {
+                server.awaitTermination();
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    public StreamObserver<Envelope> sender(StreamObserver<IngressResponse> responseObserver) {
+    public StreamObserver<LoggregatorEnvelope.Envelope> sender(StreamObserver<IngressResponse> responseObserver) {
         return asyncUnimplementedStreamingCall(getSenderMethod(), responseObserver);
     }
 
-    /**
-     */
-    public StreamObserver<EnvelopeBatch> batchSender(StreamObserver<BatchSenderResponse> responseObserver) {
+    public StreamObserver<LoggregatorEnvelope.EnvelopeBatch> batchSender(StreamObserver<BatchSenderResponse> responseObserver) {
         return asyncUnimplementedStreamingCall(getBatchSenderMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void send(EnvelopeBatch request, StreamObserver<SendResponse> responseObserver) {
-        asyncUnimplementedUnaryCall(getSendMethod(), responseObserver);
+    public void send(LoggregatorEnvelope.EnvelopeBatch request, StreamObserver<SendResponse> responseObserver) {
+        SendResponse response = SendResponse.newBuilder().build();
+
+        envelopes.addAll(request.getBatchList());
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    public List<LoggregatorEnvelope.Envelope> received() {
+        return envelopes;
     }
 }
