@@ -22,7 +22,8 @@ public final class LoggregatorEgress {
      * <pre>
      * shard_id instructs Loggregator to shard envelopes between other
      * subscriptions with the same shard_id. Loggregator will do its best to
-     * split the load evenly between subscriptions with the same shard_id.
+     * split the load evenly between subscriptions with the same shard_id
+     * (unless deterministic_name is set).
      * </pre>
      *
      * <code>string shard_id = 1;</code>
@@ -32,13 +33,36 @@ public final class LoggregatorEgress {
      * <pre>
      * shard_id instructs Loggregator to shard envelopes between other
      * subscriptions with the same shard_id. Loggregator will do its best to
-     * split the load evenly between subscriptions with the same shard_id.
+     * split the load evenly between subscriptions with the same shard_id
+     * (unless deterministic_name is set).
      * </pre>
      *
      * <code>string shard_id = 1;</code>
      */
     com.google.protobuf.ByteString
         getShardIdBytes();
+
+    /**
+     * <pre>
+     * deterministic_name is used to enable deterministic routing. This implies
+     * that gauges and counters are routed based on name. If this is excluded,
+     * then they are routed to split load evenly.
+     * </pre>
+     *
+     * <code>string deterministic_name = 5;</code>
+     */
+    java.lang.String getDeterministicName();
+    /**
+     * <pre>
+     * deterministic_name is used to enable deterministic routing. This implies
+     * that gauges and counters are routed based on name. If this is excluded,
+     * then they are routed to split load evenly.
+     * </pre>
+     *
+     * <code>string deterministic_name = 5;</code>
+     */
+    com.google.protobuf.ByteString
+        getDeterministicNameBytes();
 
     /**
      * <pre>
@@ -142,6 +166,7 @@ public final class LoggregatorEgress {
     }
     private EgressRequest() {
       shardId_ = "";
+      deterministicName_ = "";
       selectors_ = java.util.Collections.emptyList();
       usePreferredTags_ = false;
     }
@@ -202,12 +227,18 @@ public final class LoggregatorEgress {
               break;
             }
             case 34: {
-              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
                 selectors_ = new java.util.ArrayList<org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector>();
-                mutable_bitField0_ |= 0x00000004;
+                mutable_bitField0_ |= 0x00000008;
               }
               selectors_.add(
                   input.readMessage(org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector.parser(), extensionRegistry));
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              deterministicName_ = s;
               break;
             }
           }
@@ -218,7 +249,7 @@ public final class LoggregatorEgress {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
           selectors_ = java.util.Collections.unmodifiableList(selectors_);
         }
         this.unknownFields = unknownFields.build();
@@ -244,7 +275,8 @@ public final class LoggregatorEgress {
      * <pre>
      * shard_id instructs Loggregator to shard envelopes between other
      * subscriptions with the same shard_id. Loggregator will do its best to
-     * split the load evenly between subscriptions with the same shard_id.
+     * split the load evenly between subscriptions with the same shard_id
+     * (unless deterministic_name is set).
      * </pre>
      *
      * <code>string shard_id = 1;</code>
@@ -265,7 +297,8 @@ public final class LoggregatorEgress {
      * <pre>
      * shard_id instructs Loggregator to shard envelopes between other
      * subscriptions with the same shard_id. Loggregator will do its best to
-     * split the load evenly between subscriptions with the same shard_id.
+     * split the load evenly between subscriptions with the same shard_id
+     * (unless deterministic_name is set).
      * </pre>
      *
      * <code>string shard_id = 1;</code>
@@ -278,6 +311,52 @@ public final class LoggregatorEgress {
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         shardId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DETERMINISTIC_NAME_FIELD_NUMBER = 5;
+    private volatile java.lang.Object deterministicName_;
+    /**
+     * <pre>
+     * deterministic_name is used to enable deterministic routing. This implies
+     * that gauges and counters are routed based on name. If this is excluded,
+     * then they are routed to split load evenly.
+     * </pre>
+     *
+     * <code>string deterministic_name = 5;</code>
+     */
+    public java.lang.String getDeterministicName() {
+      java.lang.Object ref = deterministicName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        deterministicName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * deterministic_name is used to enable deterministic routing. This implies
+     * that gauges and counters are routed based on name. If this is excluded,
+     * then they are routed to split load evenly.
+     * </pre>
+     *
+     * <code>string deterministic_name = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getDeterministicNameBytes() {
+      java.lang.Object ref = deterministicName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        deterministicName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -419,6 +498,9 @@ public final class LoggregatorEgress {
       for (int i = 0; i < selectors_.size(); i++) {
         output.writeMessage(4, selectors_.get(i));
       }
+      if (!getDeterministicNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, deterministicName_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -442,6 +524,9 @@ public final class LoggregatorEgress {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, selectors_.get(i));
       }
+      if (!getDeterministicNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, deterministicName_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -460,6 +545,8 @@ public final class LoggregatorEgress {
       boolean result = true;
       result = result && getShardId()
           .equals(other.getShardId());
+      result = result && getDeterministicName()
+          .equals(other.getDeterministicName());
       result = result && (hasLegacySelector() == other.hasLegacySelector());
       if (hasLegacySelector()) {
         result = result && getLegacySelector()
@@ -482,6 +569,8 @@ public final class LoggregatorEgress {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + SHARD_ID_FIELD_NUMBER;
       hash = (53 * hash) + getShardId().hashCode();
+      hash = (37 * hash) + DETERMINISTIC_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getDeterministicName().hashCode();
       if (hasLegacySelector()) {
         hash = (37 * hash) + LEGACY_SELECTOR_FIELD_NUMBER;
         hash = (53 * hash) + getLegacySelector().hashCode();
@@ -625,6 +714,8 @@ public final class LoggregatorEgress {
         super.clear();
         shardId_ = "";
 
+        deterministicName_ = "";
+
         if (legacySelectorBuilder_ == null) {
           legacySelector_ = null;
         } else {
@@ -633,7 +724,7 @@ public final class LoggregatorEgress {
         }
         if (selectorsBuilder_ == null) {
           selectors_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000008);
         } else {
           selectorsBuilder_.clear();
         }
@@ -664,15 +755,16 @@ public final class LoggregatorEgress {
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         result.shardId_ = shardId_;
+        result.deterministicName_ = deterministicName_;
         if (legacySelectorBuilder_ == null) {
           result.legacySelector_ = legacySelector_;
         } else {
           result.legacySelector_ = legacySelectorBuilder_.build();
         }
         if (selectorsBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          if (((bitField0_ & 0x00000008) == 0x00000008)) {
             selectors_ = java.util.Collections.unmodifiableList(selectors_);
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000008);
           }
           result.selectors_ = selectors_;
         } else {
@@ -725,6 +817,10 @@ public final class LoggregatorEgress {
           shardId_ = other.shardId_;
           onChanged();
         }
+        if (!other.getDeterministicName().isEmpty()) {
+          deterministicName_ = other.deterministicName_;
+          onChanged();
+        }
         if (other.hasLegacySelector()) {
           mergeLegacySelector(other.getLegacySelector());
         }
@@ -732,7 +828,7 @@ public final class LoggregatorEgress {
           if (!other.selectors_.isEmpty()) {
             if (selectors_.isEmpty()) {
               selectors_ = other.selectors_;
-              bitField0_ = (bitField0_ & ~0x00000004);
+              bitField0_ = (bitField0_ & ~0x00000008);
             } else {
               ensureSelectorsIsMutable();
               selectors_.addAll(other.selectors_);
@@ -745,7 +841,7 @@ public final class LoggregatorEgress {
               selectorsBuilder_.dispose();
               selectorsBuilder_ = null;
               selectors_ = other.selectors_;
-              bitField0_ = (bitField0_ & ~0x00000004);
+              bitField0_ = (bitField0_ & ~0x00000008);
               selectorsBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getSelectorsFieldBuilder() : null;
@@ -790,7 +886,8 @@ public final class LoggregatorEgress {
        * <pre>
        * shard_id instructs Loggregator to shard envelopes between other
        * subscriptions with the same shard_id. Loggregator will do its best to
-       * split the load evenly between subscriptions with the same shard_id.
+       * split the load evenly between subscriptions with the same shard_id
+       * (unless deterministic_name is set).
        * </pre>
        *
        * <code>string shard_id = 1;</code>
@@ -811,7 +908,8 @@ public final class LoggregatorEgress {
        * <pre>
        * shard_id instructs Loggregator to shard envelopes between other
        * subscriptions with the same shard_id. Loggregator will do its best to
-       * split the load evenly between subscriptions with the same shard_id.
+       * split the load evenly between subscriptions with the same shard_id
+       * (unless deterministic_name is set).
        * </pre>
        *
        * <code>string shard_id = 1;</code>
@@ -833,7 +931,8 @@ public final class LoggregatorEgress {
        * <pre>
        * shard_id instructs Loggregator to shard envelopes between other
        * subscriptions with the same shard_id. Loggregator will do its best to
-       * split the load evenly between subscriptions with the same shard_id.
+       * split the load evenly between subscriptions with the same shard_id
+       * (unless deterministic_name is set).
        * </pre>
        *
        * <code>string shard_id = 1;</code>
@@ -852,7 +951,8 @@ public final class LoggregatorEgress {
        * <pre>
        * shard_id instructs Loggregator to shard envelopes between other
        * subscriptions with the same shard_id. Loggregator will do its best to
-       * split the load evenly between subscriptions with the same shard_id.
+       * split the load evenly between subscriptions with the same shard_id
+       * (unless deterministic_name is set).
        * </pre>
        *
        * <code>string shard_id = 1;</code>
@@ -867,7 +967,8 @@ public final class LoggregatorEgress {
        * <pre>
        * shard_id instructs Loggregator to shard envelopes between other
        * subscriptions with the same shard_id. Loggregator will do its best to
-       * split the load evenly between subscriptions with the same shard_id.
+       * split the load evenly between subscriptions with the same shard_id
+       * (unless deterministic_name is set).
        * </pre>
        *
        * <code>string shard_id = 1;</code>
@@ -880,6 +981,105 @@ public final class LoggregatorEgress {
   checkByteStringIsUtf8(value);
         
         shardId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object deterministicName_ = "";
+      /**
+       * <pre>
+       * deterministic_name is used to enable deterministic routing. This implies
+       * that gauges and counters are routed based on name. If this is excluded,
+       * then they are routed to split load evenly.
+       * </pre>
+       *
+       * <code>string deterministic_name = 5;</code>
+       */
+      public java.lang.String getDeterministicName() {
+        java.lang.Object ref = deterministicName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          deterministicName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * deterministic_name is used to enable deterministic routing. This implies
+       * that gauges and counters are routed based on name. If this is excluded,
+       * then they are routed to split load evenly.
+       * </pre>
+       *
+       * <code>string deterministic_name = 5;</code>
+       */
+      public com.google.protobuf.ByteString
+          getDeterministicNameBytes() {
+        java.lang.Object ref = deterministicName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          deterministicName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * deterministic_name is used to enable deterministic routing. This implies
+       * that gauges and counters are routed based on name. If this is excluded,
+       * then they are routed to split load evenly.
+       * </pre>
+       *
+       * <code>string deterministic_name = 5;</code>
+       */
+      public Builder setDeterministicName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        deterministicName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * deterministic_name is used to enable deterministic routing. This implies
+       * that gauges and counters are routed based on name. If this is excluded,
+       * then they are routed to split load evenly.
+       * </pre>
+       *
+       * <code>string deterministic_name = 5;</code>
+       */
+      public Builder clearDeterministicName() {
+        
+        deterministicName_ = getDefaultInstance().getDeterministicName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * deterministic_name is used to enable deterministic routing. This implies
+       * that gauges and counters are routed based on name. If this is excluded,
+       * then they are routed to split load evenly.
+       * </pre>
+       *
+       * <code>string deterministic_name = 5;</code>
+       */
+      public Builder setDeterministicNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        deterministicName_ = value;
         onChanged();
         return this;
       }
@@ -1040,9 +1240,9 @@ public final class LoggregatorEgress {
       private java.util.List<org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector> selectors_ =
         java.util.Collections.emptyList();
       private void ensureSelectorsIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
           selectors_ = new java.util.ArrayList<org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector>(selectors_);
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000008;
          }
       }
 
@@ -1258,7 +1458,7 @@ public final class LoggregatorEgress {
       public Builder clearSelectors() {
         if (selectorsBuilder_ == null) {
           selectors_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000008);
           onChanged();
         } else {
           selectorsBuilder_.clear();
@@ -1377,7 +1577,7 @@ public final class LoggregatorEgress {
           selectorsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector, org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector.Builder, org.cloudfoundry.loggregator.v2.LoggregatorEgress.SelectorOrBuilder>(
                   selectors_,
-                  ((bitField0_ & 0x00000004) == 0x00000004),
+                  ((bitField0_ & 0x00000008) == 0x00000008),
                   getParentForChildren(),
                   isClean());
           selectors_ = null;
@@ -1479,7 +1679,8 @@ public final class LoggregatorEgress {
      * <pre>
      * shard_id instructs Loggregator to shard envelopes between other
      * subscriptions with the same shard_id. Loggregator will do its best to
-     * split the load evenly between subscriptions with the same shard_id.
+     * split the load evenly between subscriptions with the same shard_id
+     * (unless deterministic_name is set).
      * </pre>
      *
      * <code>string shard_id = 1;</code>
@@ -1489,13 +1690,36 @@ public final class LoggregatorEgress {
      * <pre>
      * shard_id instructs Loggregator to shard envelopes between other
      * subscriptions with the same shard_id. Loggregator will do its best to
-     * split the load evenly between subscriptions with the same shard_id.
+     * split the load evenly between subscriptions with the same shard_id
+     * (unless deterministic_name is set).
      * </pre>
      *
      * <code>string shard_id = 1;</code>
      */
     com.google.protobuf.ByteString
         getShardIdBytes();
+
+    /**
+     * <pre>
+     * deterministic_name is used to enable deterministic routing. This implies
+     * that gauges and counters are routed based on name. If this is excluded,
+     * then they are routed to split load evenly.
+     * </pre>
+     *
+     * <code>string deterministic_name = 5;</code>
+     */
+    java.lang.String getDeterministicName();
+    /**
+     * <pre>
+     * deterministic_name is used to enable deterministic routing. This implies
+     * that gauges and counters are routed based on name. If this is excluded,
+     * then they are routed to split load evenly.
+     * </pre>
+     *
+     * <code>string deterministic_name = 5;</code>
+     */
+    com.google.protobuf.ByteString
+        getDeterministicNameBytes();
 
     /**
      * <pre>
@@ -1599,6 +1823,7 @@ public final class LoggregatorEgress {
     }
     private EgressBatchRequest() {
       shardId_ = "";
+      deterministicName_ = "";
       selectors_ = java.util.Collections.emptyList();
       usePreferredTags_ = false;
     }
@@ -1659,12 +1884,18 @@ public final class LoggregatorEgress {
               break;
             }
             case 34: {
-              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
                 selectors_ = new java.util.ArrayList<org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector>();
-                mutable_bitField0_ |= 0x00000004;
+                mutable_bitField0_ |= 0x00000008;
               }
               selectors_.add(
                   input.readMessage(org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector.parser(), extensionRegistry));
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              deterministicName_ = s;
               break;
             }
           }
@@ -1675,7 +1906,7 @@ public final class LoggregatorEgress {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
           selectors_ = java.util.Collections.unmodifiableList(selectors_);
         }
         this.unknownFields = unknownFields.build();
@@ -1701,7 +1932,8 @@ public final class LoggregatorEgress {
      * <pre>
      * shard_id instructs Loggregator to shard envelopes between other
      * subscriptions with the same shard_id. Loggregator will do its best to
-     * split the load evenly between subscriptions with the same shard_id.
+     * split the load evenly between subscriptions with the same shard_id
+     * (unless deterministic_name is set).
      * </pre>
      *
      * <code>string shard_id = 1;</code>
@@ -1722,7 +1954,8 @@ public final class LoggregatorEgress {
      * <pre>
      * shard_id instructs Loggregator to shard envelopes between other
      * subscriptions with the same shard_id. Loggregator will do its best to
-     * split the load evenly between subscriptions with the same shard_id.
+     * split the load evenly between subscriptions with the same shard_id
+     * (unless deterministic_name is set).
      * </pre>
      *
      * <code>string shard_id = 1;</code>
@@ -1735,6 +1968,52 @@ public final class LoggregatorEgress {
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         shardId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DETERMINISTIC_NAME_FIELD_NUMBER = 5;
+    private volatile java.lang.Object deterministicName_;
+    /**
+     * <pre>
+     * deterministic_name is used to enable deterministic routing. This implies
+     * that gauges and counters are routed based on name. If this is excluded,
+     * then they are routed to split load evenly.
+     * </pre>
+     *
+     * <code>string deterministic_name = 5;</code>
+     */
+    public java.lang.String getDeterministicName() {
+      java.lang.Object ref = deterministicName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        deterministicName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * deterministic_name is used to enable deterministic routing. This implies
+     * that gauges and counters are routed based on name. If this is excluded,
+     * then they are routed to split load evenly.
+     * </pre>
+     *
+     * <code>string deterministic_name = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getDeterministicNameBytes() {
+      java.lang.Object ref = deterministicName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        deterministicName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -1876,6 +2155,9 @@ public final class LoggregatorEgress {
       for (int i = 0; i < selectors_.size(); i++) {
         output.writeMessage(4, selectors_.get(i));
       }
+      if (!getDeterministicNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, deterministicName_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -1899,6 +2181,9 @@ public final class LoggregatorEgress {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, selectors_.get(i));
       }
+      if (!getDeterministicNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, deterministicName_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -1917,6 +2202,8 @@ public final class LoggregatorEgress {
       boolean result = true;
       result = result && getShardId()
           .equals(other.getShardId());
+      result = result && getDeterministicName()
+          .equals(other.getDeterministicName());
       result = result && (hasLegacySelector() == other.hasLegacySelector());
       if (hasLegacySelector()) {
         result = result && getLegacySelector()
@@ -1939,6 +2226,8 @@ public final class LoggregatorEgress {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + SHARD_ID_FIELD_NUMBER;
       hash = (53 * hash) + getShardId().hashCode();
+      hash = (37 * hash) + DETERMINISTIC_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getDeterministicName().hashCode();
       if (hasLegacySelector()) {
         hash = (37 * hash) + LEGACY_SELECTOR_FIELD_NUMBER;
         hash = (53 * hash) + getLegacySelector().hashCode();
@@ -2082,6 +2371,8 @@ public final class LoggregatorEgress {
         super.clear();
         shardId_ = "";
 
+        deterministicName_ = "";
+
         if (legacySelectorBuilder_ == null) {
           legacySelector_ = null;
         } else {
@@ -2090,7 +2381,7 @@ public final class LoggregatorEgress {
         }
         if (selectorsBuilder_ == null) {
           selectors_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000008);
         } else {
           selectorsBuilder_.clear();
         }
@@ -2121,15 +2412,16 @@ public final class LoggregatorEgress {
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         result.shardId_ = shardId_;
+        result.deterministicName_ = deterministicName_;
         if (legacySelectorBuilder_ == null) {
           result.legacySelector_ = legacySelector_;
         } else {
           result.legacySelector_ = legacySelectorBuilder_.build();
         }
         if (selectorsBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          if (((bitField0_ & 0x00000008) == 0x00000008)) {
             selectors_ = java.util.Collections.unmodifiableList(selectors_);
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000008);
           }
           result.selectors_ = selectors_;
         } else {
@@ -2182,6 +2474,10 @@ public final class LoggregatorEgress {
           shardId_ = other.shardId_;
           onChanged();
         }
+        if (!other.getDeterministicName().isEmpty()) {
+          deterministicName_ = other.deterministicName_;
+          onChanged();
+        }
         if (other.hasLegacySelector()) {
           mergeLegacySelector(other.getLegacySelector());
         }
@@ -2189,7 +2485,7 @@ public final class LoggregatorEgress {
           if (!other.selectors_.isEmpty()) {
             if (selectors_.isEmpty()) {
               selectors_ = other.selectors_;
-              bitField0_ = (bitField0_ & ~0x00000004);
+              bitField0_ = (bitField0_ & ~0x00000008);
             } else {
               ensureSelectorsIsMutable();
               selectors_.addAll(other.selectors_);
@@ -2202,7 +2498,7 @@ public final class LoggregatorEgress {
               selectorsBuilder_.dispose();
               selectorsBuilder_ = null;
               selectors_ = other.selectors_;
-              bitField0_ = (bitField0_ & ~0x00000004);
+              bitField0_ = (bitField0_ & ~0x00000008);
               selectorsBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getSelectorsFieldBuilder() : null;
@@ -2247,7 +2543,8 @@ public final class LoggregatorEgress {
        * <pre>
        * shard_id instructs Loggregator to shard envelopes between other
        * subscriptions with the same shard_id. Loggregator will do its best to
-       * split the load evenly between subscriptions with the same shard_id.
+       * split the load evenly between subscriptions with the same shard_id
+       * (unless deterministic_name is set).
        * </pre>
        *
        * <code>string shard_id = 1;</code>
@@ -2268,7 +2565,8 @@ public final class LoggregatorEgress {
        * <pre>
        * shard_id instructs Loggregator to shard envelopes between other
        * subscriptions with the same shard_id. Loggregator will do its best to
-       * split the load evenly between subscriptions with the same shard_id.
+       * split the load evenly between subscriptions with the same shard_id
+       * (unless deterministic_name is set).
        * </pre>
        *
        * <code>string shard_id = 1;</code>
@@ -2290,7 +2588,8 @@ public final class LoggregatorEgress {
        * <pre>
        * shard_id instructs Loggregator to shard envelopes between other
        * subscriptions with the same shard_id. Loggregator will do its best to
-       * split the load evenly between subscriptions with the same shard_id.
+       * split the load evenly between subscriptions with the same shard_id
+       * (unless deterministic_name is set).
        * </pre>
        *
        * <code>string shard_id = 1;</code>
@@ -2309,7 +2608,8 @@ public final class LoggregatorEgress {
        * <pre>
        * shard_id instructs Loggregator to shard envelopes between other
        * subscriptions with the same shard_id. Loggregator will do its best to
-       * split the load evenly between subscriptions with the same shard_id.
+       * split the load evenly between subscriptions with the same shard_id
+       * (unless deterministic_name is set).
        * </pre>
        *
        * <code>string shard_id = 1;</code>
@@ -2324,7 +2624,8 @@ public final class LoggregatorEgress {
        * <pre>
        * shard_id instructs Loggregator to shard envelopes between other
        * subscriptions with the same shard_id. Loggregator will do its best to
-       * split the load evenly between subscriptions with the same shard_id.
+       * split the load evenly between subscriptions with the same shard_id
+       * (unless deterministic_name is set).
        * </pre>
        *
        * <code>string shard_id = 1;</code>
@@ -2337,6 +2638,105 @@ public final class LoggregatorEgress {
   checkByteStringIsUtf8(value);
         
         shardId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object deterministicName_ = "";
+      /**
+       * <pre>
+       * deterministic_name is used to enable deterministic routing. This implies
+       * that gauges and counters are routed based on name. If this is excluded,
+       * then they are routed to split load evenly.
+       * </pre>
+       *
+       * <code>string deterministic_name = 5;</code>
+       */
+      public java.lang.String getDeterministicName() {
+        java.lang.Object ref = deterministicName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          deterministicName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * deterministic_name is used to enable deterministic routing. This implies
+       * that gauges and counters are routed based on name. If this is excluded,
+       * then they are routed to split load evenly.
+       * </pre>
+       *
+       * <code>string deterministic_name = 5;</code>
+       */
+      public com.google.protobuf.ByteString
+          getDeterministicNameBytes() {
+        java.lang.Object ref = deterministicName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          deterministicName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * deterministic_name is used to enable deterministic routing. This implies
+       * that gauges and counters are routed based on name. If this is excluded,
+       * then they are routed to split load evenly.
+       * </pre>
+       *
+       * <code>string deterministic_name = 5;</code>
+       */
+      public Builder setDeterministicName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        deterministicName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * deterministic_name is used to enable deterministic routing. This implies
+       * that gauges and counters are routed based on name. If this is excluded,
+       * then they are routed to split load evenly.
+       * </pre>
+       *
+       * <code>string deterministic_name = 5;</code>
+       */
+      public Builder clearDeterministicName() {
+        
+        deterministicName_ = getDefaultInstance().getDeterministicName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * deterministic_name is used to enable deterministic routing. This implies
+       * that gauges and counters are routed based on name. If this is excluded,
+       * then they are routed to split load evenly.
+       * </pre>
+       *
+       * <code>string deterministic_name = 5;</code>
+       */
+      public Builder setDeterministicNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        deterministicName_ = value;
         onChanged();
         return this;
       }
@@ -2497,9 +2897,9 @@ public final class LoggregatorEgress {
       private java.util.List<org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector> selectors_ =
         java.util.Collections.emptyList();
       private void ensureSelectorsIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
           selectors_ = new java.util.ArrayList<org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector>(selectors_);
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000008;
          }
       }
 
@@ -2715,7 +3115,7 @@ public final class LoggregatorEgress {
       public Builder clearSelectors() {
         if (selectorsBuilder_ == null) {
           selectors_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000008);
           onChanged();
         } else {
           selectorsBuilder_.clear();
@@ -2834,7 +3234,7 @@ public final class LoggregatorEgress {
           selectorsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector, org.cloudfoundry.loggregator.v2.LoggregatorEgress.Selector.Builder, org.cloudfoundry.loggregator.v2.LoggregatorEgress.SelectorOrBuilder>(
                   selectors_,
-                  ((bitField0_ & 0x00000004) == 0x00000004),
+                  ((bitField0_ & 0x00000008) == 0x00000008),
                   getParentForChildren(),
                   isClean());
           selectors_ = null;
@@ -5018,6 +5418,41 @@ public final class LoggregatorEgress {
   public interface GaugeSelectorOrBuilder extends
       // @@protoc_insertion_point(interface_extends:loggregator.v2.GaugeSelector)
       com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * Any egress Gauge envelope must consist of the given names.
+     * </pre>
+     *
+     * <code>repeated string names = 1;</code>
+     */
+    java.util.List<java.lang.String>
+        getNamesList();
+    /**
+     * <pre>
+     * Any egress Gauge envelope must consist of the given names.
+     * </pre>
+     *
+     * <code>repeated string names = 1;</code>
+     */
+    int getNamesCount();
+    /**
+     * <pre>
+     * Any egress Gauge envelope must consist of the given names.
+     * </pre>
+     *
+     * <code>repeated string names = 1;</code>
+     */
+    java.lang.String getNames(int index);
+    /**
+     * <pre>
+     * Any egress Gauge envelope must consist of the given names.
+     * </pre>
+     *
+     * <code>repeated string names = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getNamesBytes(int index);
   }
   /**
    * <pre>
@@ -5037,6 +5472,7 @@ public final class LoggregatorEgress {
       super(builder);
     }
     private GaugeSelector() {
+      names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
 
     @java.lang.Override
@@ -5052,6 +5488,7 @@ public final class LoggregatorEgress {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -5069,6 +5506,15 @@ public final class LoggregatorEgress {
               }
               break;
             }
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                names_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              names_.add(s);
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -5077,6 +5523,9 @@ public final class LoggregatorEgress {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          names_ = names_.getUnmodifiableView();
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -5093,6 +5542,51 @@ public final class LoggregatorEgress {
               org.cloudfoundry.loggregator.v2.LoggregatorEgress.GaugeSelector.class, org.cloudfoundry.loggregator.v2.LoggregatorEgress.GaugeSelector.Builder.class);
     }
 
+    public static final int NAMES_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList names_;
+    /**
+     * <pre>
+     * Any egress Gauge envelope must consist of the given names.
+     * </pre>
+     *
+     * <code>repeated string names = 1;</code>
+     */
+    public com.google.protobuf.ProtocolStringList
+        getNamesList() {
+      return names_;
+    }
+    /**
+     * <pre>
+     * Any egress Gauge envelope must consist of the given names.
+     * </pre>
+     *
+     * <code>repeated string names = 1;</code>
+     */
+    public int getNamesCount() {
+      return names_.size();
+    }
+    /**
+     * <pre>
+     * Any egress Gauge envelope must consist of the given names.
+     * </pre>
+     *
+     * <code>repeated string names = 1;</code>
+     */
+    public java.lang.String getNames(int index) {
+      return names_.get(index);
+    }
+    /**
+     * <pre>
+     * Any egress Gauge envelope must consist of the given names.
+     * </pre>
+     *
+     * <code>repeated string names = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNamesBytes(int index) {
+      return names_.getByteString(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -5105,6 +5599,9 @@ public final class LoggregatorEgress {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      for (int i = 0; i < names_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, names_.getRaw(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -5113,6 +5610,14 @@ public final class LoggregatorEgress {
       if (size != -1) return size;
 
       size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < names_.size(); i++) {
+          dataSize += computeStringSizeNoTag(names_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getNamesList().size();
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -5129,6 +5634,8 @@ public final class LoggregatorEgress {
       org.cloudfoundry.loggregator.v2.LoggregatorEgress.GaugeSelector other = (org.cloudfoundry.loggregator.v2.LoggregatorEgress.GaugeSelector) obj;
 
       boolean result = true;
+      result = result && getNamesList()
+          .equals(other.getNamesList());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -5140,6 +5647,10 @@ public final class LoggregatorEgress {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      if (getNamesCount() > 0) {
+        hash = (37 * hash) + NAMES_FIELD_NUMBER;
+        hash = (53 * hash) + getNamesList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5274,6 +5785,8 @@ public final class LoggregatorEgress {
       }
       public Builder clear() {
         super.clear();
+        names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -5296,6 +5809,12 @@ public final class LoggregatorEgress {
 
       public org.cloudfoundry.loggregator.v2.LoggregatorEgress.GaugeSelector buildPartial() {
         org.cloudfoundry.loggregator.v2.LoggregatorEgress.GaugeSelector result = new org.cloudfoundry.loggregator.v2.LoggregatorEgress.GaugeSelector(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          names_ = names_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.names_ = names_;
         onBuilt();
         return result;
       }
@@ -5337,6 +5856,16 @@ public final class LoggregatorEgress {
 
       public Builder mergeFrom(org.cloudfoundry.loggregator.v2.LoggregatorEgress.GaugeSelector other) {
         if (other == org.cloudfoundry.loggregator.v2.LoggregatorEgress.GaugeSelector.getDefaultInstance()) return this;
+        if (!other.names_.isEmpty()) {
+          if (names_.isEmpty()) {
+            names_ = other.names_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureNamesIsMutable();
+            names_.addAll(other.names_);
+          }
+          onChanged();
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -5361,6 +5890,137 @@ public final class LoggregatorEgress {
             mergeFrom(parsedMessage);
           }
         }
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.LazyStringList names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureNamesIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          names_ = new com.google.protobuf.LazyStringArrayList(names_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <pre>
+       * Any egress Gauge envelope must consist of the given names.
+       * </pre>
+       *
+       * <code>repeated string names = 1;</code>
+       */
+      public com.google.protobuf.ProtocolStringList
+          getNamesList() {
+        return names_.getUnmodifiableView();
+      }
+      /**
+       * <pre>
+       * Any egress Gauge envelope must consist of the given names.
+       * </pre>
+       *
+       * <code>repeated string names = 1;</code>
+       */
+      public int getNamesCount() {
+        return names_.size();
+      }
+      /**
+       * <pre>
+       * Any egress Gauge envelope must consist of the given names.
+       * </pre>
+       *
+       * <code>repeated string names = 1;</code>
+       */
+      public java.lang.String getNames(int index) {
+        return names_.get(index);
+      }
+      /**
+       * <pre>
+       * Any egress Gauge envelope must consist of the given names.
+       * </pre>
+       *
+       * <code>repeated string names = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getNamesBytes(int index) {
+        return names_.getByteString(index);
+      }
+      /**
+       * <pre>
+       * Any egress Gauge envelope must consist of the given names.
+       * </pre>
+       *
+       * <code>repeated string names = 1;</code>
+       */
+      public Builder setNames(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureNamesIsMutable();
+        names_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Any egress Gauge envelope must consist of the given names.
+       * </pre>
+       *
+       * <code>repeated string names = 1;</code>
+       */
+      public Builder addNames(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureNamesIsMutable();
+        names_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Any egress Gauge envelope must consist of the given names.
+       * </pre>
+       *
+       * <code>repeated string names = 1;</code>
+       */
+      public Builder addAllNames(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureNamesIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, names_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Any egress Gauge envelope must consist of the given names.
+       * </pre>
+       *
+       * <code>repeated string names = 1;</code>
+       */
+      public Builder clearNames() {
+        names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Any egress Gauge envelope must consist of the given names.
+       * </pre>
+       *
+       * <code>repeated string names = 1;</code>
+       */
+      public Builder addNamesBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        ensureNamesIsMutable();
+        names_.add(value);
+        onChanged();
         return this;
       }
       public final Builder setUnknownFields(
@@ -5415,6 +6075,24 @@ public final class LoggregatorEgress {
   public interface CounterSelectorOrBuilder extends
       // @@protoc_insertion_point(interface_extends:loggregator.v2.CounterSelector)
       com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * Any egress Counter envelope must have the given name.
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     */
+    java.lang.String getName();
+    /**
+     * <pre>
+     * Any egress Counter envelope must have the given name.
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();
   }
   /**
    * <pre>
@@ -5434,6 +6112,7 @@ public final class LoggregatorEgress {
       super(builder);
     }
     private CounterSelector() {
+      name_ = "";
     }
 
     @java.lang.Override
@@ -5449,6 +6128,7 @@ public final class LoggregatorEgress {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -5464,6 +6144,12 @@ public final class LoggregatorEgress {
                   input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
+              break;
+            }
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
               break;
             }
           }
@@ -5490,6 +6176,48 @@ public final class LoggregatorEgress {
               org.cloudfoundry.loggregator.v2.LoggregatorEgress.CounterSelector.class, org.cloudfoundry.loggregator.v2.LoggregatorEgress.CounterSelector.Builder.class);
     }
 
+    public static final int NAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object name_;
+    /**
+     * <pre>
+     * Any egress Counter envelope must have the given name.
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     */
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Any egress Counter envelope must have the given name.
+     * </pre>
+     *
+     * <code>string name = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -5502,6 +6230,9 @@ public final class LoggregatorEgress {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -5510,6 +6241,9 @@ public final class LoggregatorEgress {
       if (size != -1) return size;
 
       size = 0;
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -5526,6 +6260,8 @@ public final class LoggregatorEgress {
       org.cloudfoundry.loggregator.v2.LoggregatorEgress.CounterSelector other = (org.cloudfoundry.loggregator.v2.LoggregatorEgress.CounterSelector) obj;
 
       boolean result = true;
+      result = result && getName()
+          .equals(other.getName());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -5537,6 +6273,8 @@ public final class LoggregatorEgress {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5671,6 +6409,8 @@ public final class LoggregatorEgress {
       }
       public Builder clear() {
         super.clear();
+        name_ = "";
+
         return this;
       }
 
@@ -5693,6 +6433,7 @@ public final class LoggregatorEgress {
 
       public org.cloudfoundry.loggregator.v2.LoggregatorEgress.CounterSelector buildPartial() {
         org.cloudfoundry.loggregator.v2.LoggregatorEgress.CounterSelector result = new org.cloudfoundry.loggregator.v2.LoggregatorEgress.CounterSelector(this);
+        result.name_ = name_;
         onBuilt();
         return result;
       }
@@ -5734,6 +6475,10 @@ public final class LoggregatorEgress {
 
       public Builder mergeFrom(org.cloudfoundry.loggregator.v2.LoggregatorEgress.CounterSelector other) {
         if (other == org.cloudfoundry.loggregator.v2.LoggregatorEgress.CounterSelector.getDefaultInstance()) return this;
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -5758,6 +6503,95 @@ public final class LoggregatorEgress {
             mergeFrom(parsedMessage);
           }
         }
+        return this;
+      }
+
+      private java.lang.Object name_ = "";
+      /**
+       * <pre>
+       * Any egress Counter envelope must have the given name.
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Any egress Counter envelope must have the given name.
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Any egress Counter envelope must have the given name.
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Any egress Counter envelope must have the given name.
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       */
+      public Builder clearName() {
+        
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Any egress Counter envelope must have the given name.
+       * </pre>
+       *
+       * <code>string name = 1;</code>
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        name_ = value;
+        onChanged();
         return this;
       }
       public final Builder setUnknownFields(
@@ -6653,30 +7487,32 @@ public final class LoggregatorEgress {
   static {
     java.lang.String[] descriptorData = {
       "\n\014egress.proto\022\016loggregator.v2\032\016envelope" +
-      ".proto\"\235\001\n\rEgressRequest\022\020\n\010shard_id\030\001 \001" +
-      "(\t\0221\n\017legacy_selector\030\002 \001(\0132\030.loggregato" +
-      "r.v2.Selector\022+\n\tselectors\030\004 \003(\0132\030.loggr" +
-      "egator.v2.Selector\022\032\n\022use_preferred_tags" +
-      "\030\003 \001(\010\"\242\001\n\022EgressBatchRequest\022\020\n\010shard_i" +
-      "d\030\001 \001(\t\0221\n\017legacy_selector\030\002 \001(\0132\030.loggr" +
-      "egator.v2.Selector\022+\n\tselectors\030\004 \003(\0132\030." +
-      "loggregator.v2.Selector\022\032\n\022use_preferred" +
-      "_tags\030\003 \001(\010\"\230\002\n\010Selector\022\021\n\tsource_id\030\001 " +
-      "\001(\t\022*\n\003log\030\002 \001(\0132\033.loggregator.v2.LogSel" +
-      "ectorH\000\0222\n\007counter\030\003 \001(\0132\037.loggregator.v" +
-      "2.CounterSelectorH\000\022.\n\005gauge\030\004 \001(\0132\035.log" +
-      "gregator.v2.GaugeSelectorH\000\022.\n\005timer\030\005 \001" +
-      "(\0132\035.loggregator.v2.TimerSelectorH\000\022.\n\005e" +
-      "vent\030\006 \001(\0132\035.loggregator.v2.EventSelecto" +
-      "rH\000B\t\n\007Message\"\r\n\013LogSelector\"\017\n\rGaugeSe" +
-      "lector\"\021\n\017CounterSelector\"\017\n\rTimerSelect" +
-      "or\"\017\n\rEventSelector2\253\001\n\006Egress\022G\n\010Receiv" +
-      "er\022\035.loggregator.v2.EgressRequest\032\030.logg" +
-      "regator.v2.Envelope\"\0000\001\022X\n\017BatchedReceiv" +
-      "er\022\".loggregator.v2.EgressBatchRequest\032\035" +
-      ".loggregator.v2.EnvelopeBatch\"\0000\001B4\n\037org" +
-      ".cloudfoundry.loggregator.v2B\021Loggregato" +
-      "rEgressb\006proto3"
+      ".proto\"\271\001\n\rEgressRequest\022\020\n\010shard_id\030\001 \001" +
+      "(\t\022\032\n\022deterministic_name\030\005 \001(\t\0221\n\017legacy" +
+      "_selector\030\002 \001(\0132\030.loggregator.v2.Selecto" +
+      "r\022+\n\tselectors\030\004 \003(\0132\030.loggregator.v2.Se" +
+      "lector\022\032\n\022use_preferred_tags\030\003 \001(\010\"\276\001\n\022E" +
+      "gressBatchRequest\022\020\n\010shard_id\030\001 \001(\t\022\032\n\022d" +
+      "eterministic_name\030\005 \001(\t\0221\n\017legacy_select" +
+      "or\030\002 \001(\0132\030.loggregator.v2.Selector\022+\n\tse" +
+      "lectors\030\004 \003(\0132\030.loggregator.v2.Selector\022" +
+      "\032\n\022use_preferred_tags\030\003 \001(\010\"\230\002\n\010Selector" +
+      "\022\021\n\tsource_id\030\001 \001(\t\022*\n\003log\030\002 \001(\0132\033.loggr" +
+      "egator.v2.LogSelectorH\000\0222\n\007counter\030\003 \001(\013" +
+      "2\037.loggregator.v2.CounterSelectorH\000\022.\n\005g" +
+      "auge\030\004 \001(\0132\035.loggregator.v2.GaugeSelecto" +
+      "rH\000\022.\n\005timer\030\005 \001(\0132\035.loggregator.v2.Time" +
+      "rSelectorH\000\022.\n\005event\030\006 \001(\0132\035.loggregator" +
+      ".v2.EventSelectorH\000B\t\n\007Message\"\r\n\013LogSel" +
+      "ector\"\036\n\rGaugeSelector\022\r\n\005names\030\001 \003(\t\"\037\n" +
+      "\017CounterSelector\022\014\n\004name\030\001 \001(\t\"\017\n\rTimerS" +
+      "elector\"\017\n\rEventSelector2\253\001\n\006Egress\022G\n\010R" +
+      "eceiver\022\035.loggregator.v2.EgressRequest\032\030" +
+      ".loggregator.v2.Envelope\"\0000\001\022X\n\017BatchedR" +
+      "eceiver\022\".loggregator.v2.EgressBatchRequ" +
+      "est\032\035.loggregator.v2.EnvelopeBatch\"\0000\001B4" +
+      "\n\037org.cloudfoundry.loggregator.v2B\021Loggr" +
+      "egatorEgressb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -6696,13 +7532,13 @@ public final class LoggregatorEgress {
     internal_static_loggregator_v2_EgressRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_loggregator_v2_EgressRequest_descriptor,
-        new java.lang.String[] { "ShardId", "LegacySelector", "Selectors", "UsePreferredTags", });
+        new java.lang.String[] { "ShardId", "DeterministicName", "LegacySelector", "Selectors", "UsePreferredTags", });
     internal_static_loggregator_v2_EgressBatchRequest_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_loggregator_v2_EgressBatchRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_loggregator_v2_EgressBatchRequest_descriptor,
-        new java.lang.String[] { "ShardId", "LegacySelector", "Selectors", "UsePreferredTags", });
+        new java.lang.String[] { "ShardId", "DeterministicName", "LegacySelector", "Selectors", "UsePreferredTags", });
     internal_static_loggregator_v2_Selector_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_loggregator_v2_Selector_fieldAccessorTable = new
@@ -6720,13 +7556,13 @@ public final class LoggregatorEgress {
     internal_static_loggregator_v2_GaugeSelector_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_loggregator_v2_GaugeSelector_descriptor,
-        new java.lang.String[] { });
+        new java.lang.String[] { "Names", });
     internal_static_loggregator_v2_CounterSelector_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_loggregator_v2_CounterSelector_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_loggregator_v2_CounterSelector_descriptor,
-        new java.lang.String[] { });
+        new java.lang.String[] { "Name", });
     internal_static_loggregator_v2_TimerSelector_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_loggregator_v2_TimerSelector_fieldAccessorTable = new
