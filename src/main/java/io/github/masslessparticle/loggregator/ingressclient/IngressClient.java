@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Collections.*;
@@ -30,6 +31,7 @@ public class IngressClient {
 
     private List<Envelope> envelopes;
     private IngressTicker ticker = new IngressTicker();
+    private ReentrantLock lock = new ReentrantLock();
 
     public IngressClient(String address, TlsConfig tlsConfig) {
         this(address, tlsConfig, Duration.of(100, MILLIS));
@@ -39,7 +41,7 @@ public class IngressClient {
         this.address = address;
         this.tags = new HashMap<>();
         this.maxBatchSize = 100;
-        this.envelopes = Collections.synchronizedList(new ArrayList<>());
+        this.envelopes = new ArrayList<>();
 
         this.ticker.schedule(this::flushEnvelopes, interval);
 
@@ -92,22 +94,25 @@ public class IngressClient {
     }
 
     private synchronized void sendBatch(Envelope envelope) {
-        envelopes.add(envelope);
-        if (envelopes.size() >= maxBatchSize) {
-            flushEnvelopes();
-            ticker.reset();
-        }
+        locked(() -> {
+            envelopes.add(envelope);
+            if (envelopes.size() >= maxBatchSize) {
+                flushEnvelopes();
+                ticker.reset();
+            }
+        });
     }
 
     private void flushEnvelopes() {
-        EnvelopeBatch request = EnvelopeBatch.newBuilder()
-                .addAllBatch(envelopes)
-                .build();
+        locked(() -> {
+            EnvelopeBatch request = EnvelopeBatch.newBuilder()
+                    .addAllBatch(envelopes)
+                    .build();
 
-        envelopes.clear();
+            envelopes.clear();
 
-        client.send(request, new SendObserver());
-
+            client.send(request, new SendObserver());
+        });
     }
 
     private void sendOne(Envelope envelope) {
@@ -116,5 +121,14 @@ public class IngressClient {
                 .build();
 
         client.send(request, new SendObserver());
+    }
+
+    private void locked(Runnable op) {
+        lock.lock();
+        try {
+            op.run();
+        } finally {
+            lock.unlock();
+        }
     }
 }

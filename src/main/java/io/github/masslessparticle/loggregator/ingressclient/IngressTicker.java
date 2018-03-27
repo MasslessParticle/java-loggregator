@@ -20,7 +20,7 @@ public class IngressTicker {
         schedule();
     }
 
-    public void reset() {
+    public synchronized void reset() {
         timer.cancel();
         timer.purge();
 
