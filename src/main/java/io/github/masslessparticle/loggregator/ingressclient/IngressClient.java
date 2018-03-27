@@ -8,6 +8,7 @@ import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -26,10 +27,10 @@ public class IngressClient {
     private IngressStub client;
     private ManagedChannel channel;
 
-    private Map<String, String> tags;
+    private Map<String, String> tags = new ConcurrentHashMap<>();
+    private List<Envelope> envelopes = new ArrayList<>();
     private int maxBatchSize;
 
-    private List<Envelope> envelopes;
     private IngressTicker ticker = new IngressTicker();
     private ReentrantLock lock = new ReentrantLock();
 
@@ -39,9 +40,7 @@ public class IngressClient {
 
     public IngressClient(String address, TlsConfig tlsConfig, Duration interval) {
         this.address = address;
-        this.tags = new HashMap<>();
         this.maxBatchSize = 100;
-        this.envelopes = new ArrayList<>();
 
         this.ticker.schedule(this::flushEnvelopes, interval);
 
@@ -74,13 +73,20 @@ public class IngressClient {
     }
 
     public void emit(Emittable e) {
-        Envelope envelope = e.envelopeWithMessage(Envelope.newBuilder().build());
+        Envelope.Builder envelopeBuilder = Envelope.newBuilder();
+        tags.forEach(envelopeBuilder::putTags);
+
+        Envelope envelope = e.envelopeWithMessage(envelopeBuilder.build());
 
         if (e.shouldBatch()) {
             sendBatch(envelope);
         } else {
             sendOne(envelope);
         }
+    }
+
+    private void addTags(Envelope.Builder envelopeBuilder) {
+        tags.forEach(envelopeBuilder::putTags);
     }
 
     public void shutdown() {

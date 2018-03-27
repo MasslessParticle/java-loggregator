@@ -3,10 +3,7 @@ package io.github.masslessparticle.loggregator.ingressclient;
 import io.github.masslessparticle.loggregator.ingressserver.TestIngressServer;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,29 +24,54 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class IngressClientTest {
     private static TestIngressServer server;
 
+    private IngressClient client;
+    private CompletableFuture<List<Envelope>> callback;
+
     @BeforeAll
-    static void setup() {
+    static void setupAll() {
         server = buildIngressServer();
         server.start();
     }
 
+    @BeforeEach
+    void setup() {
+        callback = new CompletableFuture<>();
+        server.setResultCallback(callback);
+
+        client = buildIngressClient(server.address(), of(10, SECONDS));
+    }
+
+    @AfterEach
+    void cleanup() {
+        client.shutdown();
+    }
+
     @AfterAll
-    static void cleanup() {
+    static void cleanupAll() {
         server.stop();
     }
 
     @Test
     void clientDoesNotAcceptLessThan0ForMaxBatchSize() {
-        IngressClient client = buildIngressClient(server.address(), of(10, SECONDS));
         assertThrows(IllegalArgumentException.class, () -> client.setBatchMaxSize(-1));
     }
 
     @Test
-    void sendsSynchronously() {
-        CompletableFuture<List<Envelope>> callback = new CompletableFuture<>();
-        server.setResultCallback(callback);
+    void setsTagsOnEnvelopes() {
+        client.setTag("foo", "bar");
 
-        IngressClient client = buildIngressClient(server.address(), of(10, SECONDS));
+        SyncEnvelope env = new SyncEnvelope("sync-envelope");
+        client.emit(env);
+
+        waitForResult(callback.thenAccept((received) -> {
+            assertEquals(1, received.size());
+            assertEquals(received.get(0).getTagsOrThrow("foo"), "bar");
+            assertTrue(env.called);
+        }));
+    }
+
+    @Test
+    void sendsSynchronously() {
         SyncEnvelope env = new SyncEnvelope("sync-envelope");
 
         client.emit(env);
@@ -62,10 +84,6 @@ class IngressClientTest {
 
     @Test
     void sendsBatches() {
-        CompletableFuture<List<Envelope>> callback = new CompletableFuture<>();
-        server.setResultCallback(callback);
-
-        IngressClient client = buildIngressClient(server.address(), of(10, SECONDS));
         client.setBatchMaxSize(10);
 
         List<BatchEnvelope> sent = new ArrayList<>();
@@ -83,9 +101,6 @@ class IngressClientTest {
 
     @Test
     void sendsBatchesInIntervals() {
-        CompletableFuture<List<Envelope>> callback = new CompletableFuture<>();
-        server.setResultCallback(callback);
-
         IngressClient client = buildIngressClient(server.address(), of(100, MILLIS));
         List<BatchEnvelope> envelopes = new ArrayList<>();
 
@@ -99,6 +114,7 @@ class IngressClientTest {
             assertEquals(3, received.size());
             assertTrue(envelopes.stream().allMatch(e -> e.called));
         }));
+        client.shutdown();
     }
 
     private static TestIngressServer buildIngressServer() {
