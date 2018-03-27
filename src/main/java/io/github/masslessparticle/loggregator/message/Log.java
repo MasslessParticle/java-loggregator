@@ -6,7 +6,7 @@ import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope;
 import static com.google.protobuf.ByteString.copyFromUtf8;
 import static org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
 
-class Log implements Emittable {
+public class Log implements Emittable {
     private String message;
 
     private String appId;

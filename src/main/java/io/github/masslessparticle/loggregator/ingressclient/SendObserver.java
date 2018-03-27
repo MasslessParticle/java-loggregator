@@ -1,9 +1,10 @@
 package io.github.masslessparticle.loggregator.ingressclient;
 
 import io.grpc.stub.StreamObserver;
-import org.cloudfoundry.loggregator.v2.LoggregatorIngress;
 
-import static org.cloudfoundry.loggregator.v2.LoggregatorIngress.*;
+import static io.grpc.Status.Code;
+import static io.grpc.Status.fromThrowable;
+import static org.cloudfoundry.loggregator.v2.LoggregatorIngress.SendResponse;
 
 public class SendObserver implements StreamObserver<SendResponse> {
     @Override
@@ -11,7 +12,9 @@ public class SendObserver implements StreamObserver<SendResponse> {
 
     @Override
     public void onError(Throwable t) {
-        throw new RuntimeException(t);
+        if (fromThrowable(t).getCode() != Code.UNAVAILABLE) {
+            throw new RuntimeException(t);
+        }
     }
 
     @Override
