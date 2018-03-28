@@ -1,14 +1,12 @@
 package io.github.masslessparticle.loggregator.ingressclient;
 
 import io.github.masslessparticle.loggregator.ingressserver.TestIngressServer;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.cloudfoundry.loggregator.v2.LoggregatorEnvelope.Envelope;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -17,9 +15,7 @@ import static io.github.masslessparticle.loggregator.Util.waitForResult;
 import static java.time.Duration.of;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.time.temporal.ChronoUnit.SECONDS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class IngressClientTest {
     private static TestIngressServer server;
