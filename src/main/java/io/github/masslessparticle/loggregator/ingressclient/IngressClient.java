@@ -85,10 +85,6 @@ public class IngressClient {
         }
     }
 
-    private void addTags(Envelope.Builder envelopeBuilder) {
-        tags.forEach(envelopeBuilder::putTags);
-    }
-
     public void shutdown() {
         channel.shutdown();
 
